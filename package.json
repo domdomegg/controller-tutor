@@ -1,12 +1,13 @@
 {
-  "name": "typescript-webapp-template",
+  "name": "controller-tutor",
   "version": "0.1.0",
   "private": true,
   "license": "AGPL-3.0-only",
   "scripts": {
     "start": "next dev --turbopack",
     "build": "next build",
-    "lint": "next lint"
+    "lint": "next lint",
+    "dev": "npm start"
   },
   "dependencies": {
     "eslint-config-domdomegg": "^1.2.3",

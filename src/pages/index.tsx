@@ -1,12 +1,45 @@
+import { useState } from 'react';
+import MainMenu from '../components/MainMenu';
+import GameScreen from '../components/GameScreen';
+import ResultsScreen from '../components/ResultsScreen';
+import CreditsScreen from '../components/CreditsScreen';
+import { GameView } from '../types/game';
+
 const Home = () => {
+  const [gameView, setGameView] = useState<GameView>('menu');
+  const [score, setScore] = useState(0);
+
+  const handleGameOver = (finalScore: number) => {
+    setScore(finalScore);
+    setGameView('results');
+  };
+
   return (
-    <div className="max-w-2xl mx-auto p-16">
-      <h1 className="text-3xl font-bold mb-4">
-        Hello world!
-      </h1>
-      <p className="mb-2">This is a simple page, part of <code>typescript-webapp-template</code></p>
-      <p>See more details on <a href="https://github.com/domdomegg/typescript-webapp-template" className="underline">GitHub</a></p>
-    </div>
+    <main className="min-h-screen bg-gray-900">
+      {gameView === 'menu' && (
+        <MainMenu
+          onStartGame={() => setGameView('game')}
+          onViewCredits={() => setGameView('credits')}
+        />
+      )}
+      {gameView === 'game' && (
+        <GameScreen
+          onGameOver={handleGameOver}
+        />
+      )}
+      {gameView === 'results' && (
+        <ResultsScreen
+          score={score}
+          onPlayAgain={() => setGameView('game')}
+          onViewCredits={() => setGameView('credits')}
+        />
+      )}
+      {gameView === 'credits' && (
+        <CreditsScreen
+          onBackToMenu={() => setGameView('menu')}
+        />
+      )}
+    </main>
   );
 };
 

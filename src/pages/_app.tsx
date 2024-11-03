@@ -1,8 +1,13 @@
-import '../styles/globals.css';
 import type { AppProps } from 'next/app';
+import { GamepadProvider } from '../contexts/GamepadContext';
+import '../styles/globals.css';
 
 const App = ({ Component, pageProps }: AppProps) => {
-  return <Component {...pageProps} />;
+  return (
+    <GamepadProvider>
+      <Component {...pageProps} />
+    </GamepadProvider>
+  );
 };
 
 export default App;
