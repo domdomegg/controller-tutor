@@ -21,7 +21,7 @@ const ControllerButton: React.FC<Props> = ({
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src={`/xbox_${button}.svg`}
+        src={`./xbox_${button}.svg`}
         alt={`${button} button`}
         className="object-contain h-full w-full"
       />
