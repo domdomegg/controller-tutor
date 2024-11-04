@@ -10,6 +10,7 @@
     "dev": "npm start"
   },
   "dependencies": {
+    "clsx": "^2.1.1",
     "eslint-config-domdomegg": "^1.2.3",
     "next": "15.0.2",
     "react": "19.0.0-rc-02c0e824-20241028",

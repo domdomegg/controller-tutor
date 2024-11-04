@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ButtonType, GameStatus } from '../types/game';
 import ButtonsLayout from './ButtonsLayout';
 import { useGamepad } from '../contexts/GamepadContext';
+import PlayArea from './PlayArea';
 
 interface Props {
   onGameOver: (finalScore: number) => void;
@@ -87,7 +88,7 @@ const GameScreen: React.FC<Props> = ({ onGameOver }) => {
   const timePercentage = (gameStatus.roundTimeRemaining / gameStatus.totalRoundTime) * 100;
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white">
+    <PlayArea>
       {/* Timer bar */}
       <div className="w-full h-2 bg-gray-700 mb-8">
         <div
@@ -108,7 +109,7 @@ const GameScreen: React.FC<Props> = ({ onGameOver }) => {
       <div className="mt-8 text-xl">
         Press the highlighted button!
       </div>
-    </div>
+    </PlayArea>
   );
 };
 

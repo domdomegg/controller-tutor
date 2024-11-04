@@ -1,4 +1,5 @@
 import React from 'react';
+import clsx from 'clsx';
 import { ButtonType } from '../types/game';
 
 interface Props {
@@ -13,11 +14,11 @@ const ControllerButton: React.FC<Props> = ({
   className = '',
 }) => {
   return (
-    <div className={`
-      ${className}
-      ${disabled ? 'opacity-20' : 'opacity-100'}
-      transition-all duration-300
-      relative w-16 h-16`}
+    <div className={clsx(
+      'relative w-16 h-16 transition-all duration-300',
+      disabled ? 'opacity-10' : 'opacity-100',
+      className,
+    )}
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img

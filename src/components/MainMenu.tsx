@@ -1,6 +1,8 @@
 import React from 'react';
 import ControllerButton from './ControllerButton';
 import { useGamepad } from '../contexts/GamepadContext';
+import PlayArea from './PlayArea';
+import { H1 } from './Text';
 
 interface Props {
   onStartGame: () => void;
@@ -20,8 +22,8 @@ const MainMenu: React.FC<Props> = ({ onStartGame, onViewCredits }) => {
   }, [onStartGame, onViewCredits]);
 
   return (
-    <div className="flex flex-col items-start justify-center min-h-screen bg-gray-900 text-white p-16">
-      <h1 className="text-4xl font-bold mb-12">Controller tutor</h1>
+    <PlayArea>
+      <H1>Controller tutor</H1>
 
       <div className="space-y-6 text-xl">
         <div className="flex items-center">
@@ -33,7 +35,7 @@ const MainMenu: React.FC<Props> = ({ onStartGame, onViewCredits }) => {
           <span className="ml-4">Credits</span>
         </div>
       </div>
-    </div>
+    </PlayArea>
   );
 };
 
