@@ -45,7 +45,7 @@ const GameScreen: React.FC<Props> = ({ onGameOver }) => {
     return () => clearInterval(timer);
   }, [onGameOver]);
 
-  const { useButtonListener } = useGamepad();
+  const { useButtonListener, rumble } = useGamepad();
 
   // Handle gamepad input
   useButtonListener((button) => {
@@ -78,6 +78,7 @@ const GameScreen: React.FC<Props> = ({ onGameOver }) => {
       }
     } else {
       // Incorrect button press penalty
+      rumble();
       setGameStatus({
         ...gameStatus,
         currentScore: Math.max(0, currentScore - 25),

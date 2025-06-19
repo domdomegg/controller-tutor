@@ -10,11 +10,13 @@ type ButtonCallback = (button: ButtonType) => void;
 interface GamepadContextType {
   isGamepadConnected: boolean;
   useButtonListener: (callback: ButtonCallback, deps: DependencyList) => void;
+  rumble: () => void;
 }
 
 const GamepadContext = createContext<GamepadContextType>({
   isGamepadConnected: false,
   useButtonListener: () => {},
+  rumble: () => {},
 });
 
 interface Props {
@@ -155,9 +157,27 @@ export const GamepadProvider: React.FC<Props> = ({ children }) => {
     }, [buttonCallbacks, ...deps]);
   };
 
+  const rumble = () => {
+    if (gamepadIndex === null) return;
+
+    const gamepads = navigator.getGamepads();
+    const gamepad = gamepads[gamepadIndex];
+
+    if (gamepad && gamepad.vibrationActuator) {
+      gamepad.vibrationActuator.playEffect('dual-rumble', {
+        duration: 200,
+        strongMagnitude: 0.7,
+        weakMagnitude: 0.7,
+      }).catch((error) => {
+        console.warn('Rumble not supported or failed:', error);
+      });
+    }
+  };
+
   const contextValue = useMemo(() => ({
     isGamepadConnected: gamepadIndex !== null,
     useButtonListener,
+    rumble,
   }), [gamepadIndex, buttonCallbacks]);
 
   return (
