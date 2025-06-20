@@ -21,7 +21,7 @@ const CreditsScreen: React.FC<Props> = ({ onBackToMenu }) => {
       <h2 className="text-4xl font-bold mb-12">Credits</h2>
 
       <div className="space-y-6 text-lg max-w-2xl">
-        <p>Game built by Adam Jones, with a lot of help from Anthropic's Claude in <a href="https://github.com/cline/cline" className="text-blue-400 hover:text-blue-300 underline">Cline</a></p>
+        <p>Game built by <a href="https://adamjones.me/" className="text-blue-400 hover:text-blue-300 underline">Adam Jones</a>, with a lot of help from Anthropic's Claude in <a href="https://github.com/cline/cline" className="text-blue-400 hover:text-blue-300 underline">Cline</a></p>
 
         <p>Inspired by <a href="https://malenaschmidt.com/" className="text-blue-400 hover:text-blue-300 underline">Malena Schmidt</a>'s inability to remember where buttons are</p>
 
