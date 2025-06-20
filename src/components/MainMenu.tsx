@@ -34,6 +34,19 @@ const MainMenu: React.FC<Props> = ({ onStartGame, onViewCredits }) => {
               <p>Connect your Xbox, PlayStation, or other compatible controller via USB or Bluetooth.</p>
               <p>Then, press any button on your controller to activate it.</p>
             </div>
+            <div className="mt-4 pt-4 border-t border-yellow-600">
+              <p className="text-xs text-yellow-300">
+                No controller?{' '}
+                <a
+                  href="https://github.com/domdomegg/controller-tutor"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-yellow-200 underline hover:text-white transition-colors"
+                >
+                  See the GitHub README for a brief demo video.
+                </a>
+              </p>
+            </div>
           </div>
         </div>
       )}

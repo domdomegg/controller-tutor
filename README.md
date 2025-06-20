@@ -2,7 +2,15 @@
 
 A web game to learn where the buttons on an Xbox controller are
 
-<!-- TODO: A screenshot of the app -->
+https://github.com/user-attachments/assets/3cfbe215-8dae-40f2-a3f5-bcb87d9b3336
+
+## Wireframe
+
+Before building anything, I planned out the UI:
+
+![](./wireframe-plan.excalidraw.svg)
+
+The final product does look fairly similar to what I envisioned:
 
 ## Contributing
 
