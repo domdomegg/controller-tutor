@@ -10,7 +10,7 @@ Before building anything, I planned out the UI:
 
 ![](./wireframe-plan.excalidraw.svg)
 
-The final product does look fairly similar to what I envisioned:
+The final product does look fairly similar to what I envisioned!
 
 ## Contributing
 
