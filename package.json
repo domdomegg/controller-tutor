@@ -6,13 +6,13 @@
   "scripts": {
     "start": "next dev --turbopack",
     "build": "next build",
-    "lint": "next lint",
+    "lint": "eslint src/",
     "dev": "npm start"
   },
   "dependencies": {
     "clsx": "^2.1.1",
     "eslint-config-domdomegg": "^1.2.3",
-    "next": "^15.4.9",
+    "next": "^16.1.5",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },
