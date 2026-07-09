@@ -1,190 +1,204 @@
-import React, {
-  createContext, useContext, useEffect, useState, useMemo,
-  DependencyList
-  ,
+import {type DependencyList} from 'react';
+import type React from 'react';
+import {
+	createContext, useContext, useEffect, useState, useMemo,
 } from 'react';
-import { ButtonType, GamepadState } from '../types/game';
+import {type ButtonType, type GamepadState} from '../types/game';
 
 type ButtonCallback = (button: ButtonType) => void;
 
-interface GamepadContextType {
-  isGamepadConnected: boolean;
-  useButtonListener: (callback: ButtonCallback, deps: DependencyList) => void;
-  rumble: () => void;
-}
-
-const GamepadContext = createContext<GamepadContextType>({
-  isGamepadConnected: false,
-  useButtonListener: () => {},
-  rumble: () => {},
-});
-
-interface Props {
-  children: React.ReactNode;
-}
-
-const mapGamepadToGamepadState = (gamepad: Gamepad, deadzone = 0.5): GamepadState => {
-  const { axes, buttons } = gamepad;
-
-  return {
-    buttons: {
-      A: buttons[0].pressed,
-      B: buttons[1].pressed,
-      X: buttons[2].pressed,
-      Y: buttons[3].pressed,
-      LB: buttons[4].pressed,
-      RB: buttons[5].pressed,
-      LT: buttons[6].pressed,
-      RT: buttons[7].pressed,
-      View: buttons[8].pressed,
-      Menu: buttons[9].pressed,
-      LS: buttons[10].pressed,
-      RS: buttons[11].pressed,
-      DUp: buttons[12].pressed,
-      DDown: buttons[13].pressed,
-      DLeft: buttons[14].pressed,
-      DRight: buttons[15].pressed,
-      Xbox: buttons[16].pressed,
-
-      LUp: axes[1] < -deadzone,
-      LDown: axes[1] > deadzone,
-      LLeft: axes[0] < -deadzone,
-      LRight: axes[0] > deadzone,
-      RUp: axes[3] < -deadzone,
-      RDown: axes[3] > deadzone,
-      RLeft: axes[2] < -deadzone,
-      RRight: axes[2] > deadzone,
-    },
-    axes: {
-      L: {
-        x: axes[0],
-        y: axes[1],
-      },
-      R: {
-        x: axes[2],
-        y: axes[3],
-      },
-    },
-  };
+type GamepadContextType = {
+	isGamepadConnected: boolean;
+	useButtonListener: (callback: ButtonCallback, deps: DependencyList) => void;
+	rumble: () => void;
 };
 
-export const GamepadProvider: React.FC<Props> = ({ children }) => {
-  const [gamepadIndex, setGamepadIndex] = useState<number | null>(null);
-  const [buttonStates, setButtonStates] = useState<{
-    current: Set<ButtonType>;
-    previous: Set<ButtonType>;
-  }>({
-    current: new Set(),
-    previous: new Set(),
-  });
-  const [buttonCallbacks] = useState<Set<ButtonCallback>>(new Set());
+const GamepadContext = createContext<GamepadContextType>({
+	isGamepadConnected: false,
+	useButtonListener() {
+		// No-op default; overridden by the provider.
+	},
+	rumble() {
+		// No-op default; overridden by the provider.
+	},
+});
 
-  useEffect(() => {
-    const handleGamepadConnected = (e: GamepadEvent) => {
-      console.log('Gamepad connected:', e.gamepad);
-      setGamepadIndex(e.gamepad.index);
-    };
+type Props = {
+	children: React.ReactNode;
+};
 
-    const handleGamepadDisconnected = (e: GamepadEvent) => {
-      console.log('Gamepad disconnected:', e.gamepad);
-      if (e.gamepad.index === gamepadIndex) {
-        setGamepadIndex(null);
-      }
-    };
+const mapGamepadToGamepadState = (gamepad: Gamepad, deadzone = 0.5): GamepadState => {
+	const {axes, buttons} = gamepad;
 
-    window.addEventListener('gamepadconnected', handleGamepadConnected);
-    window.addEventListener('gamepaddisconnected', handleGamepadDisconnected);
+	return {
+		buttons: {
+			A: buttons[0].pressed,
+			B: buttons[1].pressed,
+			X: buttons[2].pressed,
+			Y: buttons[3].pressed,
+			LB: buttons[4].pressed,
+			RB: buttons[5].pressed,
+			LT: buttons[6].pressed,
+			RT: buttons[7].pressed,
+			View: buttons[8].pressed,
+			Menu: buttons[9].pressed,
+			LS: buttons[10].pressed,
+			RS: buttons[11].pressed,
+			DUp: buttons[12].pressed,
+			DDown: buttons[13].pressed,
+			DLeft: buttons[14].pressed,
+			DRight: buttons[15].pressed,
+			Xbox: buttons[16].pressed,
 
-    return () => {
-      window.removeEventListener('gamepadconnected', handleGamepadConnected);
-      window.removeEventListener('gamepaddisconnected', handleGamepadDisconnected);
-    };
-  }, [gamepadIndex]);
+			LUp: axes[1] < -deadzone,
+			LDown: axes[1] > deadzone,
+			LLeft: axes[0] < -deadzone,
+			LRight: axes[0] > deadzone,
+			RUp: axes[3] < -deadzone,
+			RDown: axes[3] > deadzone,
+			RLeft: axes[2] < -deadzone,
+			RRight: axes[2] > deadzone,
+		},
+		axes: {
+			L: {
+				x: axes[0],
+				y: axes[1],
+			},
+			R: {
+				x: axes[2],
+				y: axes[3],
+			},
+		},
+	};
+};
 
-  useEffect(() => {
-    if (gamepadIndex === null) return undefined;
+export const GamepadProvider: React.FC<Props> = ({children}) => {
+	const [gamepadIndex, setGamepadIndex] = useState<number | null>(null);
+	const [buttonStates, setButtonStates] = useState<{
+		current: Set<ButtonType>;
+		previous: Set<ButtonType>;
+	}>({
+		current: new Set(),
+		previous: new Set(),
+	});
+	const [buttonCallbacks] = useState<Set<ButtonCallback>>(new Set());
 
-    const pollGamepad = () => {
-      const gamepads = navigator.getGamepads();
-      const gamepad = gamepads[gamepadIndex];
-      if (!gamepad) return;
+	useEffect(() => {
+		const handleGamepadConnected = (e: GamepadEvent) => {
+			console.log('Gamepad connected:', e.gamepad);
+			setGamepadIndex(e.gamepad.index);
+		};
 
-      const newCurrentButtons = new Set<ButtonType>();
+		const handleGamepadDisconnected = (e: GamepadEvent) => {
+			console.log('Gamepad disconnected:', e.gamepad);
+			if (e.gamepad.index === gamepadIndex) {
+				setGamepadIndex(null);
+			}
+		};
 
-      const gamepadState = mapGamepadToGamepadState(gamepad);
+		window.addEventListener('gamepadconnected', handleGamepadConnected);
+		window.addEventListener('gamepaddisconnected', handleGamepadDisconnected);
 
-      Object.entries(gamepadState.buttons).forEach(([button, pressed]) => {
-        if (pressed) newCurrentButtons.add(button as ButtonType);
-      });
+		return () => {
+			window.removeEventListener('gamepadconnected', handleGamepadConnected);
+			window.removeEventListener('gamepaddisconnected', handleGamepadDisconnected);
+		};
+	}, [gamepadIndex]);
 
-      setButtonStates((prev) => ({
-        previous: prev.current,
-        current: newCurrentButtons,
-      }));
-    };
+	useEffect(() => {
+		if (gamepadIndex === null) {
+			return undefined;
+		}
 
-    const intervalId = setInterval(pollGamepad, 16); // ~60fps
+		const pollGamepad = () => {
+			const gamepads = navigator.getGamepads();
+			const gamepad = gamepads[gamepadIndex];
+			if (!gamepad) {
+				return;
+			}
 
-    return () => clearInterval(intervalId);
-  }, [gamepadIndex]);
+			const newCurrentButtons = new Set<ButtonType>();
 
-  // Calculate newly pressed buttons (buttons that are pressed now but weren't before)
-  const newlyPressedButtons = useMemo(() => {
-    const newButtons = new Set<ButtonType>();
-    buttonStates.current.forEach((button) => {
-      if (!buttonStates.previous.has(button)) {
-        newButtons.add(button);
-      }
-    });
-    return newButtons;
-  }, [buttonStates]);
+			const gamepadState = mapGamepadToGamepadState(gamepad);
 
-  // Notify callbacks of newly pressed buttons
-  useEffect(() => {
-    newlyPressedButtons.forEach((button) => {
-      buttonCallbacks.forEach((callback) => {
-        callback(button);
-      });
-    });
-  }, [newlyPressedButtons, buttonCallbacks]);
+			Object.entries(gamepadState.buttons).forEach(([button, pressed]) => {
+				if (pressed) {
+					newCurrentButtons.add(button as ButtonType);
+				}
+			});
 
-  const useButtonListener = (callback: ButtonCallback, deps: DependencyList) => {
-    useEffect(() => {
-      buttonCallbacks.add(callback);
-      return () => {
-        buttonCallbacks.delete(callback);
-      };
-    }, [buttonCallbacks, ...deps]);
-  };
+			setButtonStates((prev) => ({
+				previous: prev.current,
+				current: newCurrentButtons,
+			}));
+		};
 
-  const rumble = () => {
-    if (gamepadIndex === null) return;
+		const intervalId = setInterval(pollGamepad, 16); // ~60fps
 
-    const gamepads = navigator.getGamepads();
-    const gamepad = gamepads[gamepadIndex];
+		return () => {
+			clearInterval(intervalId);
+		};
+	}, [gamepadIndex]);
 
-    if (gamepad && gamepad.vibrationActuator) {
-      gamepad.vibrationActuator.playEffect('dual-rumble', {
-        duration: 200,
-        strongMagnitude: 0.7,
-        weakMagnitude: 0.7,
-      }).catch((error) => {
-        console.warn('Rumble not supported or failed:', error);
-      });
-    }
-  };
+	// Calculate newly pressed buttons (buttons that are pressed now but weren't before)
+	const newlyPressedButtons = useMemo(() => {
+		const newButtons = new Set<ButtonType>();
+		buttonStates.current.forEach((button) => {
+			if (!buttonStates.previous.has(button)) {
+				newButtons.add(button);
+			}
+		});
+		return newButtons;
+	}, [buttonStates]);
 
-  const contextValue = useMemo(() => ({
-    isGamepadConnected: gamepadIndex !== null,
-    useButtonListener,
-    rumble,
-  }), [gamepadIndex, buttonCallbacks]);
+	// Notify callbacks of newly pressed buttons
+	useEffect(() => {
+		newlyPressedButtons.forEach((button) => {
+			buttonCallbacks.forEach((callback) => {
+				callback(button);
+			});
+		});
+	}, [newlyPressedButtons, buttonCallbacks]);
 
-  return (
-    <GamepadContext.Provider value={contextValue}>
-      {children}
-    </GamepadContext.Provider>
-  );
+	const useButtonListener = (callback: ButtonCallback, deps: DependencyList) => {
+		useEffect(() => {
+			buttonCallbacks.add(callback);
+			return () => {
+				buttonCallbacks.delete(callback);
+			};
+		}, [buttonCallbacks, ...deps]);
+	};
+
+	const rumble = () => {
+		if (gamepadIndex === null) {
+			return;
+		}
+
+		const gamepads = navigator.getGamepads();
+		const gamepad = gamepads[gamepadIndex];
+
+		if (gamepad?.vibrationActuator) {
+			gamepad.vibrationActuator.playEffect('dual-rumble', {
+				duration: 200,
+				strongMagnitude: 0.7,
+				weakMagnitude: 0.7,
+			}).catch((error: unknown) => {
+				console.warn('Rumble not supported or failed:', error);
+			});
+		}
+	};
+
+	const contextValue = useMemo(() => ({
+		isGamepadConnected: gamepadIndex !== null,
+		useButtonListener,
+		rumble,
+	}), [gamepadIndex, buttonCallbacks]);
+
+	return (
+		<GamepadContext.Provider value={contextValue}>
+			{children}
+		</GamepadContext.Provider>
+	);
 };
 
 export const useGamepad = () => useContext(GamepadContext);
